@@ -3,6 +3,8 @@ import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { Employee } from './entities/employee.entity';
 import { EmployeeRepository } from './employee.repository';
+import { PaginationEmployeeDto } from './dto/pagination-employee.dto';
+import { EmployeeResponse } from './types/employee-response.type';
 
 @Injectable()
 export class EmployeeService {
@@ -13,14 +15,10 @@ export class EmployeeService {
     private readonly employeeRepository: EmployeeRepository,
   ) {}
 
-  async findAllEmployees(): Promise<Employee[]> {
-    const employee = await this.employeeRepository.findAllEmployees();
-
-    if (!employee.length) {
-      throw new NotFoundException(`ups Employees not found`);
-      this.logger.warn(`employees not found`);
-    }
-    return employee;
+  async findAllEmployees(
+    paginationDto: PaginationEmployeeDto,
+  ): Promise<EmployeeResponse> {
+    return await this.employeeRepository.findAllEmployees(paginationDto);
   }
 
   async findById(id: string): Promise<Employee> {

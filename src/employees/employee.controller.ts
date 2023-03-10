@@ -7,6 +7,7 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  Query,
   UseGuards,
   UsePipes,
   ValidationPipe,
@@ -16,6 +17,8 @@ import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { Employee } from './entities/employee.entity';
 import { EmployeeService } from './employee.service';
 import { JwtAuthGuard } from 'src/auth/auth.guard';
+import { EmployeeResponse } from './types/employee-response.type';
+import { PaginationEmployeeDto } from './dto/pagination-employee.dto';
 
 @Controller('employee')
 @UseGuards(JwtAuthGuard)
@@ -23,8 +26,12 @@ export class EmployeeController {
   constructor(private readonly employeeService: EmployeeService) {}
 
   @Get()
-  findAll() {
-    return this.employeeService.findAllEmployees();
+  findAll(
+    @Query(new ValidationPipe({
+      transformOptions: {enableImplicitConversion: true},
+    })) paginationDto: PaginationEmployeeDto,
+  ): Promise<EmployeeResponse>{
+    return this.employeeService.findAllEmployees(paginationDto);
   }
 
   @Get(':id')
